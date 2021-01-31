@@ -1,0 +1,8 @@
+<shape>
+    {{if .isHover}}
+    <rect x="{{.x}}" y="{{.y}}" width="{{.width}}" height="{{.height}}" fill="#aaaabb"/>
+    {{else}}
+    <rect x="{{.x}}" y="{{.y}}" width="{{.width}}" height="{{.height}}" fill="#8888bb"/>
+    {{end}}
+    <text x="{{add .x 10}}" y="{{add .y 30}}" text="{{.text}}" fill="#000" family="Roboto.ttf" size="12"/>
+</shape>
