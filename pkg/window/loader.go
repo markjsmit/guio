@@ -7,6 +7,7 @@ import (
 	"strings"
 	
 	"github.com/maxpower89/guio/pkg/component"
+	window2 "github.com/maxpower89/guio/pkg/component/container/window"
 	"github.com/maxpower89/guio/pkg/element"
 	"github.com/maxpower89/guio/pkg/render"
 	"github.com/maxpower89/guio/pkg/theme"
@@ -46,7 +47,7 @@ func (l *loader) Load(ctx context.Context, name string) (Window, error) {
 		return w, err
 	}
 	
-	windowComponent, _ := component.NewWindow(l.themeLoader, windowElement.Attr)
+	windowComponent, _ := window2.NewWindow(l.themeLoader, nil, windowElement.Attr)
 	container := windowComponent.(component.Container)
 	l.fillContainer(container, windowElement.Children)
 	w.SetRootComponent(windowComponent.(component.RootComponent))
@@ -63,15 +64,15 @@ type componentElement struct {
 	element interface{}
 }
 
-func (l *loader) fillContainer(container component.Container, elements []element.Element) {
+func (l *loader) fillContainer(container component.Container, elements []*element.Element) {
 	for _, elem := range elements {
 		if constructor, ok := l.components[strings.ToLower(elem.Tag)]; ok {
-			c, err := constructor(l.themeLoader, elem.Attr)
+			c, err := constructor(l.themeLoader, container.(component.Component), elem.Attr)
 			if err == nil {
 				if componentContainer, ok := c.(component.Container); ok {
 					l.fillContainer(componentContainer, elem.Children)
 				}
-				container.AddChild(c)
+				container.Children().Add(c)
 			}
 		}
 	}

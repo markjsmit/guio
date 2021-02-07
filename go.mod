@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/beevik/etree v1.1.0
+	github.com/mitchellh/hashstructure/v2 v2.0.1
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/tfriedel6/canvas v0.12.1
 	github.com/veandco/go-sdl2 v0.4.5

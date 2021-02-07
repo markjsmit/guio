@@ -2,7 +2,7 @@ package event
 
 type Callback func(event interface{})
 
-type Listener interface {
+type Listenable interface {
 	Listen(key interface{}, callback Callback)
 }
 
@@ -11,7 +11,7 @@ type Dispatcher interface {
 }
 
 type Handler interface {
-	Listener
+	Listenable
 	Dispatcher
 }
 

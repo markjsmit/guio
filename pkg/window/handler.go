@@ -3,45 +3,57 @@ package window
 import (
 	"context"
 	"reflect"
+	"strings"
 	
 	"github.com/maxpower89/guio/pkg/component"
 )
 
 type Handler interface {
-	Init(context context.Context)
+	Init(c context.Context, w Window)
 }
 
-func bindHandler(rootComponent component.Component, handler Handler)  {
+func bindHandler(group component.ComponentGroup, handler Handler) {
 	hv := reflect.ValueOf(handler)
 	for hv.Kind() == reflect.Interface || hv.Kind() == reflect.Ptr {
 		hv = hv.Elem()
 	}
 	
 	if hv.Kind() == reflect.Struct {
-		idMap := getIdMap(rootComponent, map[string]component.Component{})
 		for i := 0; i < hv.NumField(); i++ {
 			ft := hv.Type().Field(i)
 			fv := hv.Field(i)
 			if tag, ok := ft.Tag.Lookup("component"); ok {
-				if component, ok := idMap[tag]; ok {
-					fv.Set(reflect.ValueOf(component))
-				}
+				setupHandlerField(fv, group, tag)
 			}
 		}
 	}
 }
 
-func getIdMap(c component.Component, m map[string]component.Component) map[string]component.Component {
+func setupHandlerField(fv reflect.Value, group component.ComponentGroup, tag string) {
+	filteredGroup := group.Select(strings.Split(tag, " ")...)
 	
-	if ider, ok := c.(component.Identifiable); ok && ider.Identify() != "" {
-		m[ider.Identify()] = c
-	}
-	
-	if container, ok := c.(component.Container); ok {
-		for _, child := range container.GetChildren() {
-			m = getIdMap(child, m)
+	if reflect.TypeOf(filteredGroup).AssignableTo(fv.Type()) {
+		fv.Type()
+		fv.Set(reflect.ValueOf(filteredGroup))
+	} else if fv.Kind() == reflect.Slice {
+		slice:=reflect.New(fv.Type()).Elem();
+		filteredGroup.Each(func(component component.Component) {
+			cv:=reflect.ValueOf(component)
+			slice=reflect.Append(slice,cv)
+		})
+		fv.Set(slice);
+	} else if filteredGroup.Length() > 0 {
+		first, err := filteredGroup.First()
+		if err == nil {
+			fv.Set(reflect.ValueOf(first))
 		}
 	}
-	
-	return m
+}
+
+
+func setuphandler(w *window) {
+	if w.handler != nil {
+		bindHandler(w.componentGroup, w.handler)
+		w.handler.Init(w.ctx, w)
+	}
 }

@@ -1,0 +1,4 @@
+<shape>
+    <rect x="{{.Style.Box.X}}" y="{{.Style.Box.Y}}" width="{{.Style.Box.W}}" height="{{.Style.Box.H}}" stroke="{{.Style.Border}}" fill="{{.Style.Background}}"/>
+    <text x="{{.Style.InnerBox.X}}" y="{{textPosY .Style.InnerBox.Y .Style.FontSize}}" text="{{.Text}}" fill="#000" family="{{.Style.FontFamily}}" size="{{.Style.FontSize}}"/>
+</shape>

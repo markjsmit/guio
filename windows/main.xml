@@ -1,12 +1,18 @@
 <window width="861" height="768" title="hello world">
+
     <grid>
-        <grid.row>
-            <grid.column>
-                <button id="button1" x="0" y="0" width="100%" height="50" text="button1"></button>
-            </grid.column>
-            <grid.column>
-                <button id="button2" x="0" y="0" width="100%" height="50" text="button2"></button>
-            </grid.column>
-        </grid.row>
+        <grid-row>
+            <grid-column>
+                <textbox id="text1" text="text"></textbox>
+            </grid-column>
+        </grid-row>
+        <grid-row>
+            <grid-column>
+                <button id="button1" text="button1"></button>
+            </grid-column>
+            <grid-column>
+                <button id="button2" text="button2" class="big"></button>
+            </grid-column>
+        </grid-row>
     </grid>
 </window>

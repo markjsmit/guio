@@ -8,8 +8,9 @@ import (
 )
 
 type Loader interface {
-	Load(ctx context.Context, component string, data map[string]string) ([]byte, error)
-	GetPathFor(file string) string
+	LoadComponent(ctx context.Context, component string, data interface{}) ([]byte, error)
+	Path(category string, file string) string
+	LoadStylesheet(style string) ([]byte, error)
 }
 
 type loader struct {
@@ -17,24 +18,23 @@ type loader struct {
 	cache          map[string]*template.Template
 }
 
-func (t *loader) GetPathFor(file string) string {
-	return filepath.Join(t.themeDirectory, file)
+func (t *loader) Path(category string, file string) string {
+	return filepath.Join(t.themeDirectory, category, file)
 }
 
 func NewLoader(themeDirectory string) Loader {
 	return &loader{themeDirectory: themeDirectory, cache: map[string]*template.Template{}}
 }
 
-func (t *loader) get(component string) (*template.Template, error) {
+func (t *loader) get(category string, file string) (*template.Template, error) {
 	
-	tplName := component + ".xml"
-	fileName := t.GetPathFor(tplName)
+	tplName := file
+	fileName := t.Path(category, tplName)
 	
 	if tmpl, ok := t.cache[fileName]; ok {
 		return tmpl, nil
 	}
-	
-	tmpl, err := template.New(tplName).Funcs(funcMap).ParseFiles(fileName)
+	tmpl, err := template.New(tplName).Funcs(TemplateFuncs(t)).ParseFiles(fileName)
 	
 	if err == nil {
 		t.cache[fileName] = tmpl
@@ -43,13 +43,25 @@ func (t *loader) get(component string) (*template.Template, error) {
 	return tmpl, err
 }
 
-func (t *loader) Load(ctx context.Context, component string, data map[string]string) ([]byte, error) {
-	var tpl bytes.Buffer
-	tmpl, err := t.get(component)
-	err = tmpl.Execute(&tpl, data)
+func (t *loader) LoadComponent(ctx context.Context, component string, data interface{}) ([]byte, error) {
+	var buffer bytes.Buffer
+	tmpl, err := t.get("component", component+".xml")
+	err = tmpl.Execute(&buffer, data)
 	if err != nil {
 		return []byte{}, err
 	}
-	out := tpl.Bytes()
+	out := buffer.Bytes()
+	return out, err
+}
+
+func (t *loader) LoadStylesheet(style string) ([]byte, error) {
+	var buffer bytes.Buffer
+	
+	tmpl, err := t.get("style", style+".json")
+	if err != nil {
+		return nil, err
+	}
+	err = tmpl.Execute(&buffer, map[string]string{})
+	out := buffer.Bytes()
 	return out, err
 }

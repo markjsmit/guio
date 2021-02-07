@@ -41,5 +41,6 @@ func (r Rect) Draw(ctx context.Context, renderFunc RenderFunc, canvas *canvas.Ca
 		canvas.Stroke()
 	}
 	canvas.ClosePath()
+
 	return nil
 }

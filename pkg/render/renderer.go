@@ -13,12 +13,17 @@ import (
 type Renderer interface {
 	Render(ctx context.Context, canvas *canvas.Canvas, data []byte) error
 	RegisterComponent(key string, handler shape.NewComponent)
+	ThemeLoader() theme.Loader
 }
 
 type renderer struct {
 	components    map[string]shape.NewComponent
 	rootComponent shape.Component
 	themeLoader   theme.Loader
+}
+
+func (r *renderer) ThemeLoader() theme.Loader {
+	return r.themeLoader
 }
 
 func NewRenderer(loader theme.Loader) Renderer {
@@ -47,7 +52,7 @@ func (r renderer) Render(ctx context.Context, canvas *canvas.Canvas, data []byte
 	return nil
 }
 
-func (r *renderer) setupComponent(element element.Element, component shape.Component) {
+func (r *renderer) setupComponent(element *element.Element, component shape.Component) {
 	if container, ok := component.(shape.Container); ok {
 		for _, child := range element.Children {
 			if constructor, ok := r.components[child.Tag]; ok {
@@ -61,10 +66,10 @@ func (r *renderer) setupComponent(element element.Element, component shape.Compo
 
 func (r *renderer) renderFunc(ctx context.Context, component shape.Component, canvas *canvas.Canvas) {
 	if drawEvents, ok := component.(shape.DrawEvents); ok {
-		postDraw, err := drawEvents.PreDraw(ctx, canvas,r.themeLoader)
+		postDraw, err := drawEvents.PreDraw(ctx, canvas, r.themeLoader)
 		if err != nil {
 			defer postDraw()
 		}
 	}
-	component.Draw(ctx, r.renderFunc, canvas,r.themeLoader)
+	component.Draw(ctx, r.renderFunc, canvas, r.themeLoader)
 }

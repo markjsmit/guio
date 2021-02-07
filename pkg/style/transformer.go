@@ -52,16 +52,16 @@ func Height(ctx context.Context, value string) string {
 	return value
 }
 
-func Rect(ctx context.Context, x string, y string, width string, height string) sdl.Rect {
-	cx, _ := strconv.Atoi(Left(ctx, x))
-	cy, _ := strconv.Atoi(Top(ctx, y))
-	cw, _ := strconv.Atoi(Width(ctx, width))
-	ch, _ := strconv.Atoi(Height(ctx, height))
-	return sdl.Rect{
-		X: int32(cx),
-		Y: int32(cy),
-		W: int32(cw),
-		H: int32(ch),
+func Rect(ctx context.Context, x string, y string, width string, height string) sdl.FRect {
+	cx, _ := strconv.ParseFloat(Left(ctx, x),64)
+	cy, _ := strconv.ParseFloat(Top(ctx, y),64)
+	cw, _ := strconv.ParseFloat(Width(ctx, width),64)
+	ch, _ := strconv.ParseFloat(Height(ctx, height),64)
+	return sdl.FRect{
+		X: float32(cx),
+		Y: float32(cy),
+		W: float32(cw),
+		H: float32(ch),
 	}
 }
 
@@ -81,7 +81,7 @@ func Bool(ctx context.Context, b bool) string {
 	return ""
 }
 
-var valueRegex = regexp.MustCompile(`(?m)([0-9]*)(.*)`)
+var valueRegex = regexp.MustCompile(`(?m)([0-9\.]*)(.*)`)
 
 func valueUnit(input string) (float64, string) {
 	matches := valueRegex.FindStringSubmatch(input)
@@ -91,7 +91,9 @@ func valueUnit(input string) (float64, string) {
 		value, _ = strconv.ParseFloat(matches[1],64)
 	}
 	if len(matches) >= 3 {
-		unit = matches[2]
+		if matches[2]!="" {
+			unit = matches[2]
+		}
 	}
 	return value, unit
 }

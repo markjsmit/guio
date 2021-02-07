@@ -1,0 +1,36 @@
+{
+  "button": {
+    "width": "100%",
+    "height": "32",
+    "background-color": "#aaf",
+    "border-color": "#999",
+    "color": "#555",
+    "font-size": "12",
+    "font-family": "Roboto.ttf",
+    "padding": "10"
+  },
+  "button:hover": {
+    "background-color": "#eef"
+  },
+  "textbox:active":{
+    "border-color": "#9b9"
+  },
+
+  "textbox": {
+    "width": "100%",
+    "height": "32",
+    "background-color": "#fff",
+    "border-color": "#999",
+    "color": "#555",
+    "font-size": "12",
+    "font-family": "Roboto.ttf",
+    "padding": "10"
+  },
+  "textbox:active":{
+    "border-color": "#9b9"
+  },
+
+  "grid-column": {
+    "padding": "5px"
+  }
+}

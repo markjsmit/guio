@@ -4,6 +4,10 @@ import (
 	"context"
 	
 	"github.com/maxpower89/guio/pkg/component"
+	"github.com/maxpower89/guio/pkg/component/container/grid"
+	window2 "github.com/maxpower89/guio/pkg/component/container/window"
+	"github.com/maxpower89/guio/pkg/component/widget/button"
+	"github.com/maxpower89/guio/pkg/component/widget/textbox"
 	"github.com/maxpower89/guio/pkg/render"
 	"github.com/maxpower89/guio/pkg/shape"
 	"github.com/maxpower89/guio/pkg/theme"
@@ -36,15 +40,17 @@ func NewApp(themeDirectory string, windowDirectory string) App {
 		renderer:     renderer,
 	}
 	
-	a.RegisterComponent("button", component.NewButton)
-	a.RegisterComponent("window", component.NewWindow)
-	a.RegisterComponent("grid", component.NewGrid)
-	a.RegisterComponent("grid.row", component.NewGridRow)
-	a.RegisterComponent("grid.column", component.NewGridColumn)
+	a.RegisterComponent(button.Element, button.NewButton)
+	a.RegisterComponent(textbox.Element, textbox.NewTextBox)
+	a.RegisterComponent(window2.Elem, window2.NewWindow)
+	a.RegisterComponent(grid.Elem, grid.NewGrid)
+	a.RegisterComponent(grid.RowElem, grid.NewRow)
+	a.RegisterComponent(grid.ColumnElem, grid.NewColumn)
 	
 	a.RegisterShape("rect", shape.NewRect)
 	a.RegisterShape("text", shape.NewText)
 	a.RegisterShape("shape", shape.NewShape)
+	a.RegisterShape("line", shape.NewLine)
 	
 	return a
 }

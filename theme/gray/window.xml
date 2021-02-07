@@ -1,4 +1,0 @@
-<shape>
-    <rect x="0" y="0" width="{{.width}}" height="{{.height}}" fill="#ffffff"/>
-    {{.children}}
-</shape>

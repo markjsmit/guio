@@ -23,8 +23,10 @@ func (r *Shape) AddChild(shape Component) {
 }
 
 func (r *Shape) Draw(ctx context.Context, renderFunc RenderFunc, canvas *canvas.Canvas, themeLoader theme.Loader) error {
+	canvas.BeginPath()
 	for _, child := range r.children {
 		renderFunc(ctx, child, canvas)
 	}
+	canvas.ClosePath()
 	return nil
 }

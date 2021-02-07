@@ -1,0 +1,13 @@
+<shape>
+    <rect x="{{.Style.Box.X}}" y="{{.Style.Box.Y}}" width="{{.Style.Box.W}}" height="{{.Style.Box.H}}"
+          stroke="{{.Style.Border}}" fill="{{.Style.Background}}"/>
+    <text x="{{.Style.InnerBox.X}}" y="{{textPosY .Style.InnerBox.Y .Style.FontSize}}" text="{{.Text}}" fill="#000"
+          family="{{.Style.FontFamily}}" size="{{.Style.FontSize}}"/>
+    {{if .BlinkState}}
+    <line
+            x1="{{cursorX .Style.InnerBox.X .CursorPos .Style.FontSize .Style.FontFamily .Text}}"
+            x2="{{cursorX .Style.InnerBox.X .CursorPos .Style.FontSize .Style.FontFamily .Text}}"
+            y1="{{.Style.InnerBox.Y}}"
+            y2="{{add .Style.InnerBox.Y .Style.FontSize}}"></line>
+    {{end}}
+</shape>

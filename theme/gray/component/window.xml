@@ -1,0 +1,4 @@
+<shape>
+    <rect x="0" y="0" width="{{.Style.Box.W}}" height="{{.Style.Box.H}}" fill="#ffffff"/>
+    {{.Children}}
+</shape>

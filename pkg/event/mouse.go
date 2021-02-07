@@ -8,8 +8,8 @@ import (
 
 type MouseHandler interface {
 	Handler
-	UpdateMousePos(point sdl.Point)
-	UpdateBox(ctx context.Context, rect sdl.Rect)
+	UpdateMousePos(point sdl.FPoint)
+	UpdateBox(ctx context.Context, rect sdl.FRect)
 	UpdateButtonState(state uint8, button uint8)
 	IsInBox() bool
 	IsMouseDown() bool
@@ -21,9 +21,9 @@ type mouseHandler struct {
 	buttonState     uint8
 	button          uint8
 	isInBox         bool
-	pos             sdl.Point
-	relPos          sdl.Point
-	box             sdl.Rect
+	pos             sdl.FPoint
+	relPos          sdl.FPoint
+	box             sdl.FRect
 }
 
 func (m *mouseHandler) Bind(h Handler) {
@@ -42,17 +42,17 @@ func (m *mouseHandler) UpdateButtonState(state uint8, button uint8) {
 	m.update(m.pos, m.box, state, button)
 }
 
-func (m *mouseHandler) UpdateMousePos(point sdl.Point) {
+func (m *mouseHandler) UpdateMousePos(point sdl.FPoint) {
 	m.update(point, m.box, m.buttonState, m.button)
 }
 
-func (m *mouseHandler) UpdateBox(ctx context.Context, rect sdl.Rect) {
+func (m *mouseHandler) UpdateBox(ctx context.Context, rect sdl.FRect) {
 	
 	m.update(m.pos, rect, m.buttonState, m.button)
 	
 }
 
-func (m *mouseHandler) update(pos sdl.Point, box sdl.Rect, buttonState uint8, button uint8) {
+func (m *mouseHandler) update(pos sdl.FPoint, box sdl.FRect, buttonState uint8, button uint8) {
 	oldButtonState := m.buttonState
 	oldIsInBox := m.isInBox
 	
@@ -63,7 +63,7 @@ func (m *mouseHandler) update(pos sdl.Point, box sdl.Rect, buttonState uint8, bu
 	m.pos = pos
 	
 	if m.isInBox {
-		m.relPos = sdl.Point{
+		m.relPos = sdl.FPoint{
 			X: m.pos.X - box.X,
 			Y: m.pos.Y - box.Y,
 		}
@@ -92,7 +92,12 @@ func (m *mouseHandler) update(pos sdl.Point, box sdl.Rect, buttonState uint8, bu
 			m.internalHandler.Dispatch(MouseEnter{}, MouseEnter{})
 		}
 	} else {
-		m.relPos = sdl.Point{}
+		m.relPos = sdl.FPoint{}
+		
+		if m.buttonState != oldButtonState && m.buttonState == sdl.RELEASED {
+			m.Dispatch(Blur{}, Blur{})
+		}
+		
 		if oldIsInBox {
 			m.internalHandler.Dispatch(MouseLeave{}, MouseLeave{})
 		}
@@ -123,8 +128,8 @@ func (m mouseHandler) IsMouseDown() bool {
 }
 
 type MouseMove struct {
-	Pos    sdl.Point
-	RelPos sdl.Point
+	Pos    sdl.FPoint
+	RelPos sdl.FPoint
 }
 
 type MouseEnter struct{}
@@ -135,6 +140,7 @@ type MouseClick struct {
 	Button uint8
 }
 
+
 type MouseDown struct {
 	Button uint8
 }
@@ -144,8 +150,8 @@ type MouseUp struct {
 }
 
 type MouseButton struct {
-	Pos    sdl.Point
-	RelPos sdl.Point
+	Pos    sdl.FPoint
+	RelPos sdl.FPoint
 	Button uint8
 	State  uint8
 }

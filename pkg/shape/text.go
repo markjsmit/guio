@@ -30,7 +30,7 @@ type Text struct {
 
 func (t Text) Draw(ctx context.Context, renderFunc RenderFunc, canvas *canvas.Canvas, themeLoader theme.Loader) error {
 	canvas.SetFillStyle(t.Fill)
-	canvas.SetFont(themeLoader.GetPathFor("font/"+t.Family), t.Size)
+	canvas.SetFont(themeLoader.Path("font", t.Family), t.Size)
 	canvas.FillText(t.Text, t.X, t.Y)
 	return nil
 }
