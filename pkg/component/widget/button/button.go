@@ -40,7 +40,7 @@ func NewButton(loader theme.Loader, parent component.Component, attributes map[s
 }
 
 func (b *Button) Listen(key interface{}, listener event.Callback) {
-	b.mouseHandler.Listen(key, listener)
+	b.mouseHandler.Listen(key).Callback(listener)
 }
 
 func (b *Button) Identify() component.Identifier {

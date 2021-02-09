@@ -15,6 +15,10 @@ type windowHandler struct {
 	wnd     *sdlcanvas.Window
 }
 
+func (e *windowHandler) Dispose(listener Listener) {
+	e.handler.Dispose(listener)
+}
+
 func NewWindowHandler() *windowHandler {
 	return &windowHandler{handler: NewHandler()}
 }
@@ -65,8 +69,8 @@ func (e *windowHandler) handleMouseUp(button int, x int, y int) {
 		}})
 }
 
-func (e *windowHandler) Listen(key interface{}, listener Callback) {
-	e.handler.Listen(key, listener)
+func (e *windowHandler) Listen(key interface{}) Listener {
+	return e.handler.Listen(key)
 }
 
 func (e *windowHandler) Dispatch(key interface{}, data interface{}) {

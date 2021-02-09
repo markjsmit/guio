@@ -51,8 +51,10 @@ func (w *window) Open() error {
 	}
 	defer wnd.Destroy()
 	
+	var i = 0
 	wnd.MainLoop(func() {
 		w.update(wnd, meta, canvas)
+		i++
 	})
 	
 	return err
@@ -95,13 +97,12 @@ func (w *window) setup() (component.WindowMeta, *sdlcanvas.Window, *canvas.Canva
 	return meta, wnd, canvas, err
 }
 
-
 func (w *window) Close() {
 	w.wnd.Destroy()
 }
 
-func (w *window) Listen(key interface{}, callback event.Callback) {
-	w.eventHandler.Listen(key, callback)
+func (w *window) Listen(key interface{})event.Listener {
+	return w.eventHandler.Listen(key)
 }
 
 func (w *window) GetCanvas() *canvas.Canvas {

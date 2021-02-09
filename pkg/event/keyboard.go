@@ -17,12 +17,15 @@ func NewKeyboardHandler() KeyboardHandler {
 	}
 }
 
-func (k *keyboardHandler) Listen(key interface{}, callback Callback) {
-	k.internalHandler.Listen(key, callback)
+func (k *keyboardHandler) Listen(key interface{}) Listener {
+	return k.internalHandler.Listen(key)
 }
 
 func (k *keyboardHandler) Dispatch(key interface{}, data interface{}) {
 	k.internalHandler.Dispatch(key, data)
+}
+func (m *keyboardHandler) Dispose(listener Listener) {
+	m.internalHandler.Dispose(listener)
 }
 
 func (k *keyboardHandler) UpdateState(active bool) {
@@ -31,7 +34,7 @@ func (k *keyboardHandler) UpdateState(active bool) {
 
 func (k *keyboardHandler) Bind(handler Handler) {
 	
-	handler.Listen(KeyChar{}, func(event interface{}) {
+	handler.Listen(KeyChar{}).Callback(func(event interface{}) {
 		if k.active {
 			kc := event.(KeyChar)
 			k.internalHandler.Dispatch(KeyChar{}, KeyChar{
@@ -40,7 +43,7 @@ func (k *keyboardHandler) Bind(handler Handler) {
 		}
 	})
 	
-	handler.Listen(KeyDown{}, func(event interface{}) {
+	handler.Listen(KeyDown{}).Callback(func(event interface{}) {
 		if k.active {
 			kd := event.(KeyDown)
 			k.internalHandler.Dispatch(KeyDown{}, KeyDown{
@@ -51,7 +54,7 @@ func (k *keyboardHandler) Bind(handler Handler) {
 		}
 	})
 	
-	handler.Listen(KeyUp{}, func(event interface{}) {
+	handler.Listen(KeyUp{}).Callback(func(event interface{}) {
 		ku := event.(KeyUp)
 		k.internalHandler.Dispatch(KeyUp{}, KeyUp{
 			Scancode: ku.Scancode,

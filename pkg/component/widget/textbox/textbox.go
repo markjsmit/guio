@@ -49,7 +49,7 @@ func NewTextBox(loader theme.Loader, parent component.Component, attributes map[
 }
 
 func (b *Textbox) Listen(key interface{}, listener event.Callback) {
-	b.mouseHandler.Listen(key, listener)
+	b.mouseHandler.Listen(key).Callback(listener)
 }
 
 func (b *Textbox) Identify() component.Identifier {
@@ -58,11 +58,11 @@ func (b *Textbox) Identify() component.Identifier {
 
 func (b *Textbox) RegisterWindowHandler(handler event.Handler) {
 	b.mouseHandler.Bind(handler)
-	b.mouseHandler.Listen(event.MouseClick{}, b.activate)
-	b.mouseHandler.Listen(event.Blur{}, b.deactivate)
+	b.mouseHandler.Listen(event.MouseClick{}).Callback(b.activate)
+	b.mouseHandler.Listen(event.Blur{}).Callback(b.deactivate)
 	b.keyboardHandler.Bind(handler)
-	b.keyboardHandler.Listen(event.KeyDown{}, b.keyDown)
-	b.keyboardHandler.Listen(event.KeyChar{}, b.keyChar)
+	b.keyboardHandler.Listen(event.KeyDown{}).Callback(b.keyDown)
+	b.keyboardHandler.Listen(event.KeyChar{}).Callback(b.keyChar)
 }
 
 func (b *Textbox) keyDown(ev interface{}) {

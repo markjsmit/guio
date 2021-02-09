@@ -26,13 +26,17 @@ type mouseHandler struct {
 	box             sdl.FRect
 }
 
+func (m *mouseHandler) Dispose(listener Listener) {
+	m.internalHandler.Dispose(listener)
+}
+
 func (m *mouseHandler) Bind(h Handler) {
-	h.Listen(MouseMove{}, func(e interface{}) {
+	h.Listen(MouseMove{}).Callback(func(e interface{}) {
 		me := e.(MouseMove)
 		m.UpdateMousePos(me.Pos)
 	})
 	
-	h.Listen(MouseButton{}, func(e interface{}) {
+	h.Listen(MouseButton{}).Callback(func(e interface{}) {
 		me := e.(MouseButton)
 		m.UpdateButtonState(me.State, me.Button)
 	})
@@ -111,8 +115,8 @@ func NewMouseHandler() MouseHandler {
 	}
 }
 
-func (m mouseHandler) Listen(key interface{}, callback Callback) {
-	m.internalHandler.Listen(key, callback)
+func (m mouseHandler) Listen(key interface{}) Listener {
+	return m.internalHandler.Listen(key)
 }
 
 func (m mouseHandler) Dispatch(key interface{}, data interface{}) {
@@ -139,7 +143,6 @@ type MouseLeave struct{}
 type MouseClick struct {
 	Button uint8
 }
-
 
 type MouseDown struct {
 	Button uint8

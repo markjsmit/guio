@@ -2,6 +2,7 @@ package render
 
 import (
 	"context"
+	"fmt"
 	
 	"github.com/tfriedel6/canvas"
 	
@@ -17,9 +18,11 @@ type Renderer interface {
 }
 
 type renderer struct {
-	components    map[string]shape.NewComponent
-	rootComponent shape.Component
-	themeLoader   theme.Loader
+	components  map[string]shape.NewComponent
+	themeLoader theme.Loader
+	lastState   []byte
+	rootElement *element.Element
+	count       int
 }
 
 func (r *renderer) ThemeLoader() theme.Loader {
@@ -38,15 +41,26 @@ func (r *renderer) RegisterComponent(key string, handler shape.NewComponent) {
 	r.components[key] = handler
 }
 
-func (r renderer) Render(ctx context.Context, canvas *canvas.Canvas, data []byte) error {
-	rootElement, err := element.FromXml(data, "shape")
-	if err != nil {
-		return err
+func (r *renderer) Render(ctx context.Context, canvas *canvas.Canvas, data []byte) error {
+	if string(data) == string(r.lastState) {
+		if r.count > 0 {
+			return nil
+		}
+		r.count++
+	} else {
+		var err error
+		r.rootElement, err = element.FromXml(data, "shape")
+		if err != nil {
+			return err
+		}
+		r.lastState = data
+		r.count = 0
 	}
 	
+	fmt.Println("Rerender");
 	rootComponent, _ := shape.NewShape(map[string]string{})
-	r.setupComponent(rootElement, rootComponent)
 	
+	r.setupComponent(r.rootElement, rootComponent)
 	r.renderFunc(ctx, rootComponent, canvas)
 	
 	return nil

@@ -15,7 +15,6 @@ type state struct {
 	abs   AbsoluteStyle
 	style Style
 	box   sdl.FRect
-	hash  uint64
 }
 
 type Style struct {
@@ -68,6 +67,7 @@ func NewStyle(attributes map[string]string, loader theme.Loader) *Style {
 
 func (s *Style) Build(ctx context.Context) AbsoluteStyle {
 	c := s.GetCompleteStyle()
+	c.lastState=s.lastState
 	if c.Changed(ctx) {
 		OuterBox := Rect(ctx, c.Left, c.Top, c.Width, c.Height)
 		mt, mr, mb, ml := PaddingString(c.Margin)
@@ -103,7 +103,7 @@ func (s *Style) Build(ctx context.Context) AbsoluteStyle {
 			InnerCtx:   pctx,
 		}
 		
-		s.lastState.style = *s
+		s.lastState.style = c
 		s.lastState.box = RectFromContext(ctx)
 	}
 	

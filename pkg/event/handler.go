@@ -1,9 +1,7 @@
 package event
 
-type Callback func(event interface{})
-
 type Listenable interface {
-	Listen(key interface{}, callback Callback)
+	Listen(key interface{}) Listener
 }
 
 type Dispatcher interface {
@@ -13,30 +11,36 @@ type Dispatcher interface {
 type Handler interface {
 	Listenable
 	Dispatcher
+	Dispose(listener Listener)
 }
 
 type handler struct {
-	events map[interface{}][]Callback
+	events map[interface{}]map[string]Listener
 }
 
-func (h *handler) Listen(key interface{}, listener Callback) {
+func (h *handler) Listen(key interface{}) Listener {
 	if _, ok := h.events[key]; !ok {
-		h.events[key] = []Callback{}
+		h.events[key] = map[string]Listener{}
 	}
-	
-	h.events[key] = append(h.events[key], listener)
+	listener := NewListener(h, key)
+	h.events[key][listener.Id()] = listener
+	return listener
 }
 
 func (h *handler) Dispatch(key interface{}, data interface{}) {
 	if listeners, ok := h.events[key]; ok {
 		for _, listener := range listeners {
-			listener(data)
+			listener.Trigger(data)
 		}
 	}
 }
 
 func NewHandler() *handler {
 	return &handler{
-		events: map[interface{}][]Callback{},
+		events: map[interface{}]map[string]Listener{},
 	}
+}
+
+func (h *handler) Dispose(listener Listener) {
+	delete(h.events[listener.Key()], listener.Id())
 }
